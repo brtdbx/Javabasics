@@ -38,7 +38,7 @@ public class App {
             // -----------------------
             controller.arrayBeispiel();
             controller.hashMapBeispiel();
-//            controller.regExpressions();
+            controller.regExpressions();
 //            controller.loggingBeispiel();
             //controller.holeUmgebung();
             //controller.leseAusDatei();
@@ -120,7 +120,6 @@ public class App {
     public void regExpressions() {
 
         /*
-
           Example: email-Validation with regular expressions emailPattern =
           [A-Za-z0-9_]+(?:[\.\-][ A-Za-z0-9_]+)*@[
           A-Za-z0-9_]{1}[[A-Za-z0-9_].\-]*\.[A-Za-z]{2,} [A-Za-z0-9_] are the
@@ -198,7 +197,7 @@ public class App {
         double stepWidth = (endX - startX) / steps;
 
         DoubleUnaryOperator myFunction = Math::sin;
-        DoubleFunction myFunction2 = (double x) -> Math.sin(x*x)*Math.cos(x*x);
+        DoubleFunction myFunction2 = (double x) -> Math.sin(x * x) * Math.cos(x * x);
 
         System.out.println("someRekursion " + someRekursion(100.00));
         System.out.println("recursiveFunction " + recursiveFunction(x -> x * x, 100.00));
@@ -456,7 +455,7 @@ public class App {
 
         map.put(2, "2");
         map.put(3, "3");
-        Integer st1=0;
+        Integer st1 = 0;
 
 
         for (Object key : map.keySet()) {
