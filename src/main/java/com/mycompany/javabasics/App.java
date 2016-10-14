@@ -114,7 +114,6 @@ public class App {
         }
 
         System.out.println("matches = " + line.matches(patternStr));
-
     }
 
     public void regExpressions() {
