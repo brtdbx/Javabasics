@@ -461,20 +461,13 @@ public class App {
             System.out.println("key: " + key + " value: " + map.get(key).toString());
         }
 
-        map.remove(
-                3);
-        System.out.println(
-                "Is HashMap is empty: " + map.isEmpty());
-        System.out.println(
-                "Size of Map: " + map.size());
-        System.out.println(
-                "Does HashMap contains 2 as key: " + map.containsKey(2));
-        System.out.println(
-                "Does HashMap contains 3 as key: " + map.containsKey(3));
-        System.out.println(
-                "Does HashMap contains st1:" + map.containsValue(st1));
-        System.out.println(
-                "map.get(1):" + map.get(1));
+        map.remove(3);
+        System.out.println("Is HashMap is empty: " + map.isEmpty());
+        System.out.println("Size of Map: " + map.size());
+        System.out.println("Does HashMap contains 2 as key: " + map.containsKey(2));
+        System.out.println("Does HashMap contains 3 as key: " + map.containsKey(3));
+        System.out.println("Does HashMap contains st1:" + map.containsValue(st1));
+        System.out.println("map.get(1):" + map.get(1));
     }
 
     /**
@@ -507,20 +500,13 @@ public class App {
             System.out.println("key: " + key + " value: " + map.get(key).toString());
         }
 
-        map.remove(
-                3);
-        System.out.println(
-                "Is HashMap is empty: " + map.isEmpty());
-        System.out.println(
-                "Size of Map: " + map.size());
-        System.out.println(
-                "Does HashMap contains 2 as key: " + map.containsKey(2));
-        System.out.println(
-                "Does HashMap contains 3 as key: " + map.containsKey(3));
-        System.out.println(
-                "Does HashMap contains st1:" + map.containsValue(st1));
-        System.out.println(
-                "map.get(1):" + map.get(1));
+        map.remove(3);
+        System.out.println("Is HashMap is empty: " + map.isEmpty());
+        System.out.println("Size of Map: " + map.size());
+        System.out.println("Does HashMap contains 2 as key: " + map.containsKey(2));
+        System.out.println("Does HashMap contains 3 as key: " + map.containsKey(3));
+        System.out.println("Does HashMap contains st1:" + map.containsValue(st1));
+        System.out.println("map.get(1):" + map.get(1));
     }
 
     /**
