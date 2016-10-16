@@ -12,6 +12,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -36,9 +37,9 @@ public class App {
         App controller = new App();
         try {
             // -----------------------
-            controller.arrayBeispiel();
-            controller.hashMapBeispiel();
-            controller.regExpressions();
+//            controller.arrayBeispiel();
+//            controller.hashMapBeispiel();
+//            controller.regExpressions();
 //            controller.loggingBeispiel();
             //controller.holeUmgebung();
             //controller.leseAusDatei();
@@ -48,9 +49,10 @@ public class App {
 //            controller.joinStringsWithCommaIfNotEmpty();
 //            controller.joinExamplesJDK7();
 //            controller.joinExamples();
-            controller.someMathSomelambda();
+//            controller.someMathSomelambda();
 //            controller.printUtf8CharTable();
             //controller.showTextProps();
+            controller.someBigDecimal();
             // -----------------------
         } catch (Exception ex) {
             /*
@@ -164,6 +166,10 @@ public class App {
         BigDecimal x1, x2, x1Rounded, x2Rounded, result, resultRounded;
         x1 = new BigDecimal(10.0015);
         x2 = new BigDecimal(20.0014);
+
+        // java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result requires scale here!!
+        BigDecimal x6 = new BigDecimal(1.0).divide(new BigDecimal(3.0), 10, RoundingMode.HALF_EVEN);
+
         x1Rounded = x1.setScale(3, BigDecimal.ROUND_HALF_UP);
         x2Rounded = x2.setScale(3, BigDecimal.ROUND_HALF_UP);
 
