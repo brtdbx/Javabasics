@@ -7,7 +7,7 @@ import java.util.ResourceBundle;
 
 public class Texter {
 
-    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(App.class);
+//    private final static org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(App.class);
     private static final String BUNDLE_NAME = "texte01";
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME, Locale.GERMANY);
 

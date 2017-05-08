@@ -1,5 +1,6 @@
 package com.mycompany.javabasics;
 
+import brUtils.MathUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -13,26 +14,31 @@ import java.io.Writer;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.DoubleFunction;
 import java.util.function.DoubleUnaryOperator;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager; // do not import java.util.logging.Level at the same time!
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+// Math Utils from Apache
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.RealMatrix;
+
+import org.joda.time.DateTime;
+
+// Logging
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+import org.pmw.tinylog.Logger;
+
 
 public class App {
 
     public static void main(String[] args) {
-        final Logger logger = LoggerFactory.getLogger(App.class);
+//        final Logger logger = LoggerFactory.getLogger(App.class);
 
         App controller = new App();
         try {
@@ -40,7 +46,7 @@ public class App {
 //            controller.arrayBeispiel();
 //            controller.hashMapBeispiel();
 //            controller.regExpressions();
-//            controller.loggingBeispiel();
+            controller.loggingBeispiel();
             //controller.holeUmgebung();
             //controller.leseAusDatei();
             //controller.javascriptEngineBenutzen();
@@ -51,8 +57,14 @@ public class App {
 //            controller.joinExamples();
 //            controller.someMathSomelambda();
 //            controller.printUtf8CharTable();
-            //controller.showTextProps();
-            controller.someBigDecimal();
+//            //controller.showTextProps();
+//            controller.fragenTest3();
+//            controller.someBigDecimal();
+//            controller.someBigDecimal2();
+            controller.apacheMathExample();
+//            controller.runden();
+//            controller.dioptrienTest();
+//            controller.dateTimeTests();
             // -----------------------
         } catch (Exception ex) {
             /*
@@ -60,8 +72,69 @@ public class App {
               keep the methods code exception clean - for educational reasons -
               (your IDE will show you what exceptions are to be handled with)
              */
-            logger.error("Nicht schön: Controller-Exception:", ex);
+            Logger.error("Nicht schön: Controller-Exception:", ex);
         }
+    }
+
+    public void apacheMathExample() {
+
+// Create a real matrix with two rows and three columns, using a factory
+// method that selects the implementation class for us.
+        double[][] matrixData = {{1, 2, 3}, {4, 5, 6}};
+
+        RealMatrix m = MatrixUtils.createRealMatrix(matrixData);
+
+        System.out.println("" + Arrays.toString(m.getRow(0)));
+        System.out.println("" + Arrays.toString(m.getColumn(0)));
+
+        System.out.println("" + m.getRowVector(0));
+        System.out.println("" + m.getColumnVector(0));
+
+// One more with three rows, two columns, this time instantiating the
+// RealMatrix implementation class directly.
+        double[][] matrixData2 = {{1d, 2d}, {2d, 5d}, {1d, 7d}};
+        RealMatrix n = new Array2DRowRealMatrix(matrixData2);
+
+// Note: The constructor copies  the input double[][] array in both cases.
+// Now multiply m by n
+        RealMatrix p = m.multiply(n);
+        System.out.println(p.getRowDimension());    // 2
+        System.out.println(p.getColumnDimension()); // 2
+
+// Invert p, using LU decomposition
+        RealMatrix pInverse = new LUDecomposition(p).getSolver().getInverse();
+
+        System.out.println("" + pInverse.toString());
+
+    }
+
+    public void dateTimeTests() {
+
+        Calendar gebDat1 = new GregorianCalendar(2000, 6, 27);
+        Calendar gebDat2 = new GregorianCalendar(2005, 9, 27);
+        Calendar now = Calendar.getInstance(); // now
+        // org.joda.time.DateTime
+        // simply pass JDK Date or Calendar to a Joda-Time into the constructor:
+        DateTime jodaDate1 = new DateTime(gebDat1);
+        DateTime jodadate2 = new DateTime(gebDat2);
+        DateTime jodaNow = new DateTime(now);
+
+        System.out.println("dtNow: " + jodaNow);
+        jodaDate1.isAfter(jodadate2);
+        System.out.println(jodaDate1 + "isAfter " + jodadate2 + " :" + jodaDate1.isAfter(jodadate2));
+
+        System.out.println("" + jodaDate1.toString());
+
+        Calendar vb = new GregorianCalendar(2017, 1, 1);
+        DateTime jodaVb = new DateTime(vb);
+        DateTime dtTest = new DateTime(new GregorianCalendar(2017, 1, 16));
+
+        boolean sameYearSameMonthNowLess16th = ((dtTest.getYear() == jodaVb.getYear())
+                && (dtTest.getMonthOfYear() == jodaVb.getMonthOfYear())
+                && (dtTest.getDayOfMonth() < 16));
+
+        System.out.println("" + sameYearSameMonthNowLess16th);
+
     }
 
     public void showTextProps() {
@@ -132,6 +205,8 @@ public class App {
           "[\\w]+(?:[\\.\\-][\\w]+)*@[\\w]{1}[\\w.\\-]*\\.[A-Za-z]{2,}"
          */
         String emailPattern = "[\\w]+(?:[\\.\\-][\\w]+)*@[\\w]{1}[\\w.\\-]*\\.[A-Za-z]{2,}";
+        String emailRegex = "^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$"; // CPU, RAM Killer expression!
+
         String multilineCheckPattern1 = "[[ \\t\\r\\n\\v]\\p{Print}üÜäÄöÖß\\§&&[^&<>]]*";
 
         System.out.println(Pattern.matches(multilineCheckPattern1, "hallo 1     sdsf \\n \\t sfs"));
@@ -139,36 +214,106 @@ public class App {
         System.out.println("Pattern to match: " + emailPattern);
 
         String[] emailStringsToTest = {
-                "test@test.de",
-                "test@server-dest.de",
-                "vorname.nachname@domain.com",
-                "vorname.nachname@sub.domain.com",
-                "vorname.nachname@s123-sub.123-domain.com",
-                "test@@test.de", //zuviele @
-                "test@test@test.de", //zuviele @
-                "test.de", //unvollständig
-                "test@test", //unvollständig
-                "te st@test.de", //leerzeichen
-                "test@test test.de", //leerzeichen
-                "est@testtest.d e", //leerzeichen
-                "geüäöÜÄÖhale@test.ru" //umlaut
+            "test@test.de",
+            "test@server-dest.de",
+            "vorname.nachname@domain.com",
+            "vorname.nachname@sub.domain.com",
+            "vorname.nachname@s123-sub.123-domain.com",
+            "test@@test.de", //zuviele @
+            "test@test@test.de", //zuviele @
+            "test.de", //unvollständig
+            "test@test", //unvollständig
+            "te st@test.de", //leerzeichen
+            "test@test test.de", //leerzeichen
+            "est@testtest.d e", //leerzeichen
+            "geüäöÜÄÖhale@test.ru", //umlaut
+            "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa!",
+            "aabcr@s"
         };
-
+        long started = System.currentTimeMillis();
         for (int i = 0; i < emailStringsToTest.length; i++) {
             String emailStringToTest = emailStringsToTest[i];
             System.out.println(String.format("%4d) ", i) + emailStringToTest
                     + " matches: " + Pattern.matches(emailPattern, emailStringToTest));
         }
+        long end = System.currentTimeMillis() - started;
+        System.out.println("Anzahl Millisekunden: " + end);
+
+    }
+
+    public void dioptrienTest() {
+
+        boolean ok;
+
+        ok = dioptrienErlaubt(new BigDecimal("0.2551"));
+        ok = dioptrienErlaubt(new BigDecimal("0.25"));
+        ok = dioptrienErlaubt(new BigDecimal("0.2500000001"));
+        ok = dioptrienErlaubt(new BigDecimal("0.25000000001"));
+        ok = dioptrienErlaubt(new BigDecimal("99.2500000001"));
+        ok = dioptrienErlaubt(new BigDecimal("99.25000000001"));
+        ok = dioptrienErlaubt(new BigDecimal("99.2500000000"));
+        ok = dioptrienErlaubt(new BigDecimal("7.75"));
+        ok = dioptrienErlaubt(new BigDecimal("2.85"));
+        ok = dioptrienErlaubt(new BigDecimal("12.25000000001"));
+        ok = dioptrienErlaubt(new BigDecimal("13"));
+        ok = dioptrienErlaubt(new BigDecimal("0.75"));
+        ok = dioptrienErlaubt(new BigDecimal("1"));
+        ok = dioptrienErlaubt(new BigDecimal("1.25"));
+
+    }
+
+//    private boolean dioptrienErlaubt(BigDecimal d) {
+//
+//        boolean erlaubt = false;
+//
+//        int myscale = 10;
+//        BigDecimal eps = BigDecimal.valueOf(1, myscale);
+//
+//        System.out.println("-----------------------------------");
+//        System.out.println("d=" + d);
+//        System.out.println("eps=" + eps);
+//
+//        BigDecimal a1 = d.multiply(BigDecimal.valueOf(4).setScale(myscale + 1, BigDecimal.ROUND_DOWN));
+//        System.out.println("a1=" + a1);
+//        BigDecimal a2 = d.multiply(BigDecimal.valueOf(4).setScale(myscale + 1)).setScale(0, RoundingMode.DOWN);
+//        System.out.println("a2=" + a2);
+//        BigDecimal a3 = (a1.subtract(a2)).setScale(myscale, RoundingMode.DOWN);
+//        System.out.println("a3= " + a3);
+//        erlaubt = (a3.compareTo(eps) == -1);
+//
+//        System.out.println("erlaubt: " + erlaubt);
+//
+//        return erlaubt;
+//    }
+    private boolean runden() {
+
+        BigDecimal zahl = new BigDecimal("-5.5");
+        BigDecimal gerundeteZahl = zahl.divide(new BigDecimal(5), 0, RoundingMode.CEILING);
+        gerundeteZahl = gerundeteZahl.multiply(new BigDecimal(5));
+
+        System.out.println("" + gerundeteZahl);
+
+        return true;
+    }
+
+    private boolean dioptrienErlaubt(BigDecimal d) {
+        // Die Funktion prüft, ob die übergebene BigDecimal - Zahl d ein Vielfaches von 0.25 ist, ndem sie prüft, ob 4*d ganzzahlig ist.
+        System.out.println("-----------------------------------");
+        boolean erlaubt = ((d.multiply(BigDecimal.valueOf(4))).remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0);
+
+        System.out.println("d=" + d + "    ---> erlaubt:" + erlaubt);
+
+        return erlaubt;
     }
 
     public void someBigDecimal() {
 
         BigDecimal x1, x2, x1Rounded, x2Rounded, result, resultRounded;
-        x1 = new BigDecimal(10.0015);
-        x2 = new BigDecimal(20.0014);
+        x1 = new BigDecimal("10.0015");
+        x2 = new BigDecimal("20.0014");
 
         // java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result requires scale here!!
-        BigDecimal x6 = new BigDecimal(1.0).divide(new BigDecimal(3.0), 10, RoundingMode.HALF_EVEN);
+        BigDecimal x6 = new BigDecimal("1.0").divide(new BigDecimal("3.0"), 10, RoundingMode.HALF_EVEN);
 
         x1Rounded = x1.setScale(3, BigDecimal.ROUND_HALF_UP);
         x2Rounded = x2.setScale(3, BigDecimal.ROUND_HALF_UP);
@@ -191,6 +336,48 @@ public class App {
         System.out.println("x1+x2 = " + result);
         resultRounded = result.setScale(3, BigDecimal.ROUND_HALF_UP);
         System.out.println("resultRounded=" + resultRounded);
+
+    }
+
+    public void someBigDecimal2() {
+
+        boolean erlaubt = false;
+
+        int myscale = 10;
+        BigDecimal eps = BigDecimal.valueOf(1, 10); // i.e 1^(-10)
+//
+
+        System.out.println("ugly Divisions");
+        BigDecimal bd1 = new BigDecimal("20");
+        BigDecimal bd2 = new BigDecimal("3");
+
+        // this is ok, as 10*3 = 30     
+        BigDecimal bd3 = bd1.multiply(bd2);
+
+        //but this calclulation throws an arithmetic exception, since 10/3 = 0.333333..., has infinite scale!
+        //BigDecimal bd4 = bd1.divide(bd2); 
+        // performs the division, so that myscale digits are precisely (including the given roundind mode)
+        BigDecimal bd5 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.DOWN);
+//        BigDecimal bd5 = saveDivision(bd1, bd2, myscale);
+        System.out.println("" + bd5);
+        BigDecimal bd6 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.UP);
+        System.out.println("" + bd6);
+        BigDecimal bd9 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.HALF_UP);
+//        BigDecimal bd9 = saveDivision(bd1, bd2);
+        System.out.println("" + bd9);
+        System.out.println("" + bd9.subtract(bd6));
+
+        System.out.println("isZeroWithRespectToScale // kleiner als Test ...");
+        BigDecimal delta1 = bd5.subtract(bd6);
+        System.out.println("" + delta1 + " --> isZeroWithRespectToScale(scale:" + myscale + "): " + MathUtils.isZeroWithRespectToScale(delta1, myscale));
+        System.out.println("" + delta1 + " --> isZeroWithRespectToScale(scale:" + (myscale - 1) + "): " + MathUtils.isZeroWithRespectToScale(delta1, myscale - 1));
+
+        System.out.println("Test for whole number");
+        BigDecimal bd7 = new BigDecimal("-12.000000000000000000");
+        System.out.println("" + bd7 + " --> isWholeNumber: " + MathUtils.isWholeNumber(bd7));
+
+        BigDecimal bd8 = new BigDecimal("-12.000000000000000000001");
+        System.out.println("" + bd8 + " --> isWholeNumber: " + MathUtils.isWholeNumber(bd8));
 
     }
 
@@ -238,10 +425,10 @@ public class App {
             return 0;
         } else {
             return x + someRekursion(x - 1);
+
         }
 
     }
-
 
     static class Calculator {
 
@@ -449,19 +636,16 @@ public class App {
 //
 //
 //    }
-
     /**
      * ########################## hashMapBeispiel #############################
      */
     public void hashMapBeispiel2() {
-
 
         HashMap map = new HashMap();
 
         map.put(2, "2");
         map.put(3, "3");
         Integer st1 = 0;
-
 
         for (Object key : map.keySet()) {
             System.out.println("key: " + key + " value: " + map.get(key).toString());
@@ -578,21 +762,22 @@ public class App {
         /*
           loggingBeispiel - Achtung App uses slf4j as logging API over jul
          */
-        final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(App.class);
+//        final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(App.class
+//        );
 
-        logger.trace("Hello World!");
-        logger.debug("How are you today?");
-        logger.info("I am fine.");
-        logger.warn("I love programming.");
-        logger.error("I am programming.");
+        Logger.trace("Hello World!");
+        Logger.debug("How are you today?");
+        Logger.info("I am fine.");
+        Logger.warn("I love programming.");
+        Logger.error("I am programming.");
         //LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
         //lc.setLoggingLevel(ch.qos.logback.classic.Level.DEBUG);
-        logger.info("info msg");
-        logger.debug("debug msg");
+        Logger.info("info msg");
+        Logger.debug("debug msg");
 
         String jft_id = "112";
         String jft_symbol = "square";
-        logger.debug("Processing trade with id: {} and symbol : {} ", jft_id, jft_symbol);
+        Logger.debug("Processing trade with id: {} and symbol : {} ", jft_id, jft_symbol);
 
     }
 
@@ -643,8 +828,8 @@ public class App {
         int len = wert.length();
 
         for (int i = 0;
-             i < len;
-             i++) {
+                i < len;
+                i++) {
             n += Character.getNumericValue(wert.charAt(len - 1 - i)) * (2 + (i % MODULO_6));
         }
 
