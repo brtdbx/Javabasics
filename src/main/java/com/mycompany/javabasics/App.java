@@ -34,7 +34,6 @@ import org.joda.time.DateTime;
 //import org.slf4j.LoggerFactory;
 import org.pmw.tinylog.Logger;
 
-
 public class App {
 
     public static void main(String[] args) {
@@ -46,7 +45,7 @@ public class App {
 //            controller.arrayBeispiel();
 //            controller.hashMapBeispiel();
 //            controller.regExpressions();
-            controller.loggingBeispiel();
+            //controller.loggingBeispiel();
             //controller.holeUmgebung();
             //controller.leseAusDatei();
             //controller.javascriptEngineBenutzen();
@@ -61,7 +60,7 @@ public class App {
 //            controller.fragenTest3();
 //            controller.someBigDecimal();
 //            controller.someBigDecimal2();
-            controller.apacheMathExample();
+            controller.vergleichsTest();
 //            controller.runden();
 //            controller.dioptrienTest();
 //            controller.dateTimeTests();
@@ -74,6 +73,24 @@ public class App {
              */
             Logger.error("Nicht schön: Controller-Exception:", ex);
         }
+    }
+
+    public void vergleichsTest() {
+
+        //VergleichMichMalClass v1 = new VergleichMichMalClass(0, null, null, null, null);
+        VergleichMichMalClass v1 = new VergleichMichMalClass(0, null, new GregorianCalendar(2000, 6, 27), "Name", "Vorname");
+
+        //VergleichMichMalClass v2 = new VergleichMichMalClass(0, null, null, null, null);
+        VergleichMichMalClass v2 = new VergleichMichMalClass(0, null, new GregorianCalendar(2000, 6, 27), "Name", "Vorname");
+        System.out.println("" + v1.ermittleVornameNameGeburtsdatumHash());
+        System.out.println("" + v2.ermittleVornameNameGeburtsdatumHash());
+        System.out.println("" + v1.istGleichAufNameVornameGeburtsdatum(v2));
+
+        v2.setName("Name2");
+        System.out.println("" + v1.ermittleVornameNameGeburtsdatumHash());
+        System.out.println("" + v2.ermittleVornameNameGeburtsdatumHash());
+        System.out.println("" + v1.istGleichAufNameVornameGeburtsdatum(v2));
+
     }
 
     public void apacheMathExample() {
@@ -204,10 +221,10 @@ public class App {
           final emailPattern is: emailPattern =
           "[\\w]+(?:[\\.\\-][\\w]+)*@[\\w]{1}[\\w.\\-]*\\.[A-Za-z]{2,}"
          */
-        String emailPattern = "[\\w]+(?:[\\.\\-][\\w]+)*@[\\w]{1}[\\w.\\-]*\\.[A-Za-z]{2,}";
+        String emailPattern = "[\\w]+(?:[.\\-][\\w]+)*@[\\w][\\w.\\-]*\\.[A-Za-z]{2,}";
         String emailRegex = "^([0-9a-zA-Z]([-.\\w]*[0-9a-zA-Z])*@([0-9a-zA-Z][-\\w]*[0-9a-zA-Z]\\.)+[a-zA-Z]{2,9})$"; // CPU, RAM Killer expression!
 
-        String multilineCheckPattern1 = "[[ \\t\\r\\n\\v]\\p{Print}üÜäÄöÖß\\§&&[^&<>]]*";
+        String multilineCheckPattern1 = "[[ \\t\\r\\n\\v]\\p{Print}üÜäÄöÖß§&&[^&<>]]*";
 
         System.out.println(Pattern.matches(multilineCheckPattern1, "hallo 1     sdsf \\n \\t sfs"));
 
@@ -559,28 +576,28 @@ public class App {
             }
 
             public String vector2String(double[] x) {
-                String vector2String = "(";
+                StringBuilder vector2String = new StringBuilder("(");
 
                 for (int i = 0; i < x.length - 1; i++) {
-                    vector2String = vector2String + x[i] + ",";
+                    vector2String.append(x[i]).append(",");
                 }
-                vector2String = vector2String + x[x.length - 1] + ")";
-                return vector2String;
+                vector2String.append(x[x.length - 1]).append(")");
+                return vector2String.toString();
             }
 
             public String matrix2String(double[][] m) {
-                String matrix2String = "";
+                StringBuilder matrix2String = new StringBuilder();
 
                 int numOfCols = m[0].length; // works as all rows have same number of col values
                 int numOfRows = m.length; // works
                 for (double[] aM : m) {
                     for (int j = 0; j < numOfCols; j++) {
                         String tmp = String.format("%1$,8.2f", aM[j]);
-                        matrix2String = matrix2String + tmp;
+                        matrix2String.append(tmp);
                     }
-                    matrix2String += System.getProperty("line.separator");
+                    matrix2String.append(System.getProperty("line.separator"));
                 }
-                return matrix2String;
+                return matrix2String.toString();
             }
 
         }
@@ -716,12 +733,12 @@ public class App {
 
         //aus Datei lesen
         byte zeichen;
-        String text = "";
+        StringBuilder text = new StringBuilder();
 
         do {
             zeichen = (byte) inputStreamReader.read();
             System.out.print(zeichen + " ");
-            text += (char) zeichen;
+            text.append((char) zeichen);
         } while (zeichen != -1);
         inputStreamReader.close();
 
@@ -732,12 +749,12 @@ public class App {
           aus Datei lesen mit BufferedReader auf FileReader
          */
         FileReader fileReader = null;
-        String returnValue = null;
+        StringBuilder returnValue = null;
         fileReader = new FileReader(pathAndFilename);
         BufferedReader bufferedReader = new BufferedReader(fileReader);
         String line;
         while ((line = bufferedReader.readLine()) != null) {
-            returnValue += line + "\n";
+            returnValue.append(line).append("\n");
         }
         fileReader.close();
         System.out.println(returnValue);
@@ -764,7 +781,6 @@ public class App {
          */
 //        final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(App.class
 //        );
-
         Logger.trace("Hello World!");
         Logger.debug("How are you today?");
         Logger.info("I am fine.");
