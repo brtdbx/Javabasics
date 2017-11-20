@@ -1,6 +1,5 @@
 package com.mycompany.javabasics;
 
-import brUtils.MathUtils;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
@@ -12,11 +11,8 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.*;
-import java.util.function.DoubleFunction;
-import java.util.function.DoubleUnaryOperator;
 import java.util.regex.Pattern;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager; // do not import java.util.logging.Level at the same time!
@@ -258,50 +254,6 @@ public class App {
 
     }
 
-    public void dioptrienTest() {
-
-        boolean ok;
-
-        ok = dioptrienErlaubt(new BigDecimal("0.2551"));
-        ok = dioptrienErlaubt(new BigDecimal("0.25"));
-        ok = dioptrienErlaubt(new BigDecimal("0.2500000001"));
-        ok = dioptrienErlaubt(new BigDecimal("0.25000000001"));
-        ok = dioptrienErlaubt(new BigDecimal("99.2500000001"));
-        ok = dioptrienErlaubt(new BigDecimal("99.25000000001"));
-        ok = dioptrienErlaubt(new BigDecimal("99.2500000000"));
-        ok = dioptrienErlaubt(new BigDecimal("7.75"));
-        ok = dioptrienErlaubt(new BigDecimal("2.85"));
-        ok = dioptrienErlaubt(new BigDecimal("12.25000000001"));
-        ok = dioptrienErlaubt(new BigDecimal("13"));
-        ok = dioptrienErlaubt(new BigDecimal("0.75"));
-        ok = dioptrienErlaubt(new BigDecimal("1"));
-        ok = dioptrienErlaubt(new BigDecimal("1.25"));
-
-    }
-
-//    private boolean dioptrienErlaubt(BigDecimal d) {
-//
-//        boolean erlaubt = false;
-//
-//        int myscale = 10;
-//        BigDecimal eps = BigDecimal.valueOf(1, myscale);
-//
-//        System.out.println("-----------------------------------");
-//        System.out.println("d=" + d);
-//        System.out.println("eps=" + eps);
-//
-//        BigDecimal a1 = d.multiply(BigDecimal.valueOf(4).setScale(myscale + 1, BigDecimal.ROUND_DOWN));
-//        System.out.println("a1=" + a1);
-//        BigDecimal a2 = d.multiply(BigDecimal.valueOf(4).setScale(myscale + 1)).setScale(0, RoundingMode.DOWN);
-//        System.out.println("a2=" + a2);
-//        BigDecimal a3 = (a1.subtract(a2)).setScale(myscale, RoundingMode.DOWN);
-//        System.out.println("a3= " + a3);
-//        erlaubt = (a3.compareTo(eps) == -1);
-//
-//        System.out.println("erlaubt: " + erlaubt);
-//
-//        return erlaubt;
-//    }
     private boolean runden() {
 
         BigDecimal zahl = new BigDecimal("-5.5");
@@ -311,161 +263,6 @@ public class App {
         System.out.println("" + gerundeteZahl);
 
         return true;
-    }
-
-    private boolean dioptrienErlaubt(BigDecimal d) {
-        // Die Funktion prüft, ob die übergebene BigDecimal - Zahl d ein Vielfaches von 0.25 ist, ndem sie prüft, ob 4*d ganzzahlig ist.
-        System.out.println("-----------------------------------");
-        boolean erlaubt = ((d.multiply(BigDecimal.valueOf(4))).remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0);
-
-        System.out.println("d=" + d + "    ---> erlaubt:" + erlaubt);
-
-        return erlaubt;
-    }
-
-    public void someBigDecimal() {
-
-        BigDecimal x1, x2, x1Rounded, x2Rounded, result, resultRounded;
-        x1 = new BigDecimal("10.0015");
-        x2 = new BigDecimal("20.0014");
-
-        // java.lang.ArithmeticException: Non-terminating decimal expansion; no exact representable decimal result requires scale here!!
-        BigDecimal x6 = new BigDecimal("1.0").divide(new BigDecimal("3.0"), 10, RoundingMode.HALF_EVEN);
-
-        x1Rounded = x1.setScale(3, BigDecimal.ROUND_HALF_UP);
-        x2Rounded = x2.setScale(3, BigDecimal.ROUND_HALF_UP);
-
-        Double d = 1e-34;
-        BigDecimal x3 = new BigDecimal(d);
-        BigDecimal x4 = (new BigDecimal(BigInteger.ONE)).scaleByPowerOfTen(-34);
-
-        System.out.println("x3=" + x3 + "\nx3.unscaledValue()=" + x3.unscaledValue() + "\nx3.scale()=" + x3.scale());
-        System.out.println("x4=" + x4 + "\nx4.unscaledValue()=" + x4.unscaledValue() + "\nx4.scale()=" + x4.scale());
-
-        BigDecimal x5 = x4.subtract(x3);
-        System.out.println("x5=" + x5.toEngineeringString());
-
-        System.out.println("x1=" + x1);
-        System.out.println("x2=" + x2);
-        System.out.println("x1Rounded=" + x1Rounded);
-        System.out.println("x2Rounded=" + x2Rounded);
-        result = x1.add(x2);
-        System.out.println("x1+x2 = " + result);
-        resultRounded = result.setScale(3, BigDecimal.ROUND_HALF_UP);
-        System.out.println("resultRounded=" + resultRounded);
-
-    }
-
-    public void someBigDecimal2() {
-
-        boolean erlaubt = false;
-
-        int myscale = 10;
-        BigDecimal eps = BigDecimal.valueOf(1, 10); // i.e 1^(-10)
-//
-
-        System.out.println("ugly Divisions");
-        BigDecimal bd1 = new BigDecimal("20");
-        BigDecimal bd2 = new BigDecimal("3");
-
-        // this is ok, as 10*3 = 30     
-        BigDecimal bd3 = bd1.multiply(bd2);
-
-        //but this calclulation throws an arithmetic exception, since 10/3 = 0.333333..., has infinite scale!
-        //BigDecimal bd4 = bd1.divide(bd2); 
-        // performs the division, so that myscale digits are precisely (including the given roundind mode)
-        BigDecimal bd5 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.DOWN);
-//        BigDecimal bd5 = saveDivision(bd1, bd2, myscale);
-        System.out.println("" + bd5);
-        BigDecimal bd6 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.UP);
-        System.out.println("" + bd6);
-        BigDecimal bd9 = MathUtils.saveDivision(bd1, bd2, myscale, RoundingMode.HALF_UP);
-//        BigDecimal bd9 = saveDivision(bd1, bd2);
-        System.out.println("" + bd9);
-        System.out.println("" + bd9.subtract(bd6));
-
-        System.out.println("isZeroWithRespectToScale // kleiner als Test ...");
-        BigDecimal delta1 = bd5.subtract(bd6);
-        System.out.println("" + delta1 + " --> isZeroWithRespectToScale(scale:" + myscale + "): " + MathUtils.isZeroWithRespectToScale(delta1, myscale));
-        System.out.println("" + delta1 + " --> isZeroWithRespectToScale(scale:" + (myscale - 1) + "): " + MathUtils.isZeroWithRespectToScale(delta1, myscale - 1));
-
-        System.out.println("Test for whole number");
-        BigDecimal bd7 = new BigDecimal("-12.000000000000000000");
-        System.out.println("" + bd7 + " --> isWholeNumber: " + MathUtils.isWholeNumber(bd7));
-
-        BigDecimal bd8 = new BigDecimal("-12.000000000000000000001");
-        System.out.println("" + bd8 + " --> isWholeNumber: " + MathUtils.isWholeNumber(bd8));
-
-    }
-
-    public void someMathSomelambda() {
-
-        double startX = 0;
-        double endX = 10;
-        double steps = 100;
-        double stepWidth = (endX - startX) / steps;
-
-        DoubleUnaryOperator myFunction = Math::sin;
-        DoubleFunction myFunction2 = (double x) -> Math.sin(x * x) * Math.cos(x * x);
-
-        System.out.println("someRekursion " + someRekursion(100.00));
-        System.out.println("recursiveFunction " + recursiveFunction(x -> x * x, 100.00));
-
-        double x1 = startX;
-        double x2, res1, res2;
-        for (int i = 0; i < steps; i++) {
-            x2 = x1 + stepWidth;
-            res1 = Calculator.calcSomething(myFunction, x1, x2);
-            res2 = Calculator.calcSomething2(myFunction2, x1, x2);
-            System.out.println("x1, x2, res1, res2:" + x1 + ", " + x2 + "," + res1 + ", " + res2 + ", myFunction(x1) " + myFunction.applyAsDouble(x1));
-            x1 = x2;
-
-        }
-
-    }
-
-    // Type: (f, x) -> F(f, x)
-    public static double recursiveFunction(DoubleUnaryOperator f, double x) {
-
-        if (x < 1) {
-            return 0;
-        } else {
-            return x * x + f.applyAsDouble(x - 1);
-        }
-
-    }
-
-    // Type: x -> f(x) 
-    public static double someRekursion(double x) {
-
-        if (x < 1) {
-            return 0;
-        } else {
-            return x + someRekursion(x - 1);
-
-        }
-
-    }
-
-    static class Calculator {
-
-        private static double calcSomething(DoubleUnaryOperator func, double x1, double x2) {
-
-            double y1 = func.applyAsDouble(x1);
-            double y2 = func.applyAsDouble(x2);
-
-            return (y2 - y1) / (x2 - x1);
-        }
-
-        private static double calcSomething2(DoubleFunction func, double x1, double x2) {
-
-            double y1, y2;
-            y1 = (Double) func.apply(x1);
-            y2 = (Double) func.apply(x2);
-
-            return (y2 - y1) / (x2 - x1);
-        }
-
     }
 
     public void joinExamplesJDK7() {
@@ -832,7 +629,7 @@ public class App {
 
     private Integer berechnePruefziffer(String wert) {
         /*
-         berechnet die PrÃƒÆ’Ã‚Â¼fziffer modulo 11 fÃƒÆ’Ã‚Â¼r Zahlen und Zeichenketten
+         berechnet die Prüfziffer modulo 11 für Zahlen und Zeichenketten
          beliebiger Länge
          */
 
@@ -843,9 +640,7 @@ public class App {
         int n = 0;
         int len = wert.length();
 
-        for (int i = 0;
-                i < len;
-                i++) {
+        for (int i = 0; i < len; i++) {
             n += Character.getNumericValue(wert.charAt(len - 1 - i)) * (2 + (i % MODULO_6));
         }
 
