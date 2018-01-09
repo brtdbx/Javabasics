@@ -19,9 +19,11 @@ import javax.script.ScriptEngineManager; // do not import java.util.logging.Leve
 
 // Math Utils from Apache
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.EigenDecomposition;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.stat.correlation.Covariance;
 
 import org.joda.time.DateTime;
 
@@ -29,6 +31,8 @@ import org.joda.time.DateTime;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
 import org.pmw.tinylog.Logger;
+import pipapo.EigentuemerRolle;
+import pipapo.Haus;
 
 public class App {
 
@@ -56,10 +60,11 @@ public class App {
 //            controller.fragenTest3();
 //            controller.someBigDecimal();
 //            controller.someBigDecimal2();
-            controller.vergleichsTest();
+//            controller.vergleichsTest();
 //            controller.runden();
 //            controller.dioptrienTest();
 //            controller.dateTimeTests();
+            controller.pcaTest();
             // -----------------------
         } catch (Exception ex) {
             /*
@@ -69,6 +74,76 @@ public class App {
              */
             Logger.error("Nicht schön: Controller-Exception:", ex);
         }
+    }
+
+    public void apacheMathExample() {
+
+// Create a real matrix with two rows and three columns, using a factory
+// method that selects the implementation class for us.
+        double[][] matrixData = {{1, 2, 3}, {4, 5, 6}};
+
+        RealMatrix m = MatrixUtils.createRealMatrix(matrixData);
+
+        printMatrix(m);
+
+        System.out.println("" + Arrays.toString(m.getRow(0)));
+        System.out.println("" + Arrays.toString(m.getColumn(0)));
+
+        System.out.println("" + m.getRowVector(0));
+        System.out.println("" + m.getColumnVector(0));
+
+// One more with three rows, two columns, this time instantiating the
+// RealMatrix implementation class directly.
+        double[][] matrixData2 = {{1d, 2d}, {2d, 5d}, {1d, 7d}};
+        RealMatrix n = new Array2DRowRealMatrix(matrixData2);
+
+        printMatrix(n);
+// Note: The constructor copies  the input double[][] array in both cases.
+// Now multiply m by n
+        RealMatrix p = m.multiply(n);
+        printMatrix(p);
+        System.out.println(p.getRowDimension());    // 2
+        System.out.println(p.getColumnDimension()); // 2
+
+// Invert p, using LU decomposition
+        RealMatrix pInverse = new LUDecomposition(p).getSolver().getInverse();
+
+        //System.out.println("" + pInverse.toString());
+        printMatrix(pInverse);
+
+        RealMatrix eins = p.multiply(pInverse);
+        printMatrix(eins);
+    }
+
+    private void printMatrix(RealMatrix m) {
+
+        for (int i = 0; i < m.getRowDimension(); i++) {
+            System.out.println("" + Arrays.toString(m.getRow(i)));
+        }
+
+    }
+
+    public void pcaTest() {
+
+        //create points in a double array
+        double[][] pointsArray = new double[][]{
+            new double[]{-1.0, -1.0},
+            new double[]{-1.0, 1.0},
+            new double[]{1.0, 1.0}};
+
+        //create real matrix
+        RealMatrix realMatrix = MatrixUtils.createRealMatrix(pointsArray);
+
+        //create covariance matrix of points, then find eigen vectors
+        //see https://stats.stackexchange.com/questions/2691/making-sense-of-principal-component-analysis-eigenvectors-eigenvalues
+        Covariance covariance = new Covariance(realMatrix);
+        RealMatrix covarianceMatrix = covariance.getCovarianceMatrix();
+        EigenDecomposition ed = new EigenDecomposition(covarianceMatrix);
+
+        
+        printMatrix(realMatrix);
+        printMatrix(covarianceMatrix);
+        System.out.println("" + Arrays.toString(ed.getRealEigenvalues()));
     }
 
     public void vergleichsTest() {
@@ -89,35 +164,13 @@ public class App {
 
     }
 
-    public void apacheMathExample() {
+    public void hausEigentuemerTest() {
 
-// Create a real matrix with two rows and three columns, using a factory
-// method that selects the implementation class for us.
-        double[][] matrixData = {{1, 2, 3}, {4, 5, 6}};
+        Haus h1 = new Haus("haus1");
+        Haus h2 = new Haus("haus2");
 
-        RealMatrix m = MatrixUtils.createRealMatrix(matrixData);
-
-        System.out.println("" + Arrays.toString(m.getRow(0)));
-        System.out.println("" + Arrays.toString(m.getColumn(0)));
-
-        System.out.println("" + m.getRowVector(0));
-        System.out.println("" + m.getColumnVector(0));
-
-// One more with three rows, two columns, this time instantiating the
-// RealMatrix implementation class directly.
-        double[][] matrixData2 = {{1d, 2d}, {2d, 5d}, {1d, 7d}};
-        RealMatrix n = new Array2DRowRealMatrix(matrixData2);
-
-// Note: The constructor copies  the input double[][] array in both cases.
-// Now multiply m by n
-        RealMatrix p = m.multiply(n);
-        System.out.println(p.getRowDimension());    // 2
-        System.out.println(p.getColumnDimension()); // 2
-
-// Invert p, using LU decomposition
-        RealMatrix pInverse = new LUDecomposition(p).getSolver().getInverse();
-
-        System.out.println("" + pInverse.toString());
+        EigentuemerRolle e1 = new EigentuemerRolle("e1");
+        EigentuemerRolle e2 = new EigentuemerRolle("e2");
 
     }
 
